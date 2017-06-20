@@ -1,0 +1,190 @@
+#include "Scene.h"
+
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
+
+#include <algorithm>
+
+Scene::Scene()
+    : RenderableItem ()
+    , m_backgroundColor(108, 108, 132)
+{
+
+}
+
+Scene::~Scene()
+{
+    qDeleteAll(m_viewports);
+    qDeleteAll(m_items);
+}
+
+void Scene::render()
+{
+    GLint width = m_size.width();
+    GLint height = m_size.height();
+
+    // Set static configs:
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_ALPHA_TEST);
+    glEnable(GL_TEXTURE_2D);
+
+    glViewport(0, 0, width, height);
+    glLoadIdentity();
+
+    QSize sceneSize = m_size;
+    QVector<RenderableItem *> items = m_items;
+    std::for_each(m_viewports.begin(), m_viewports.end(), [sceneSize, items](Viewport *item){
+        item->setSceneSize(sceneSize);
+        item->render();
+        std::for_each(items.begin(), items.end(), [](RenderableItem *item){
+            item->render();
+        });
+        item->renderBorder();
+    });
+    // Assure we restore the original viewport:
+    glViewport( 0, 0, width, height );
+    glFlush();
+}
+
+void Scene::init()
+{
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_ALPHA_TEST);
+    glEnable(GL_TEXTURE_2D);
+
+    // Set the background color:
+    // --------------------------------------
+    glClearColor(m_backgroundColor.redF()
+                 , m_backgroundColor.greenF()
+                 , m_backgroundColor.blueF()
+                 , m_backgroundColor.alphaF());
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |  GL_ACCUM_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    //    std::for_each(m_viewports.begin(), m_viewports.end(), [](Viewport *item){
+    //        item->init();
+    //    });
+    //    std::for_each(m_items.begin(), m_items.end(), [](RenderableItem *item){
+    //        item->init();
+    //    });
+
+}
+
+void Scene::mouseMoveEvent(QMouseEvent *event)
+{
+    QPoint pos(event->pos().x(), event->pos().y());
+    Viewport *item = viewportForPos(pos);
+    if(item){
+        item->mouseMoveEvent(event);
+    }
+}
+
+void Scene::mousePressEvent(QMouseEvent *event)
+{
+    std::for_each(m_viewports.begin(), m_viewports.end(), [](Viewport *view){
+        view->setSelected(false);
+    });
+    QPoint pos(event->pos().x(), event->pos().y());
+    Viewport *item = viewportForPos(pos);
+    if(item){
+        item->mousePressEvent(event);
+        item->setSelected(true);
+    }
+}
+
+void Scene::mouseReleaseEvent(QMouseEvent *event)
+{
+    QPoint pos(event->pos().x(), event->pos().y());
+    Viewport *item = viewportForPos(pos);
+    if(item){
+        item->mouseReleaseEvent(event);
+    }
+}
+
+void Scene::wheelEvent(QWheelEvent *event)
+{
+    QPoint pos(event->pos().x(), event->pos().y());
+    Viewport *item = viewportForPos(pos);
+    if(item){
+        item->wheelEvent(event);
+    }
+}
+
+Viewport * Scene::viewportForPos(const QPoint &pos) const
+{
+    QVector<Viewport *> ports = m_viewports;
+    std::sort(ports.begin(), ports.end(), [](Viewport *a, Viewport *b) -> bool{
+        return b->rect().contains(a->rect());
+    });
+
+    auto it = std::find_if(ports.begin(), ports.end(), [pos](Viewport *view) -> bool{
+            return view->rect().contains(pos);
+    });
+
+    if(it != ports.end()){
+        return *it;
+    }
+
+    return Q_NULLPTR;
+}
+
+Viewport *Scene::selectedViewport()
+{
+    auto it = std::find_if(m_viewports.begin(), m_viewports.end(), [](Viewport *view) -> bool{
+            return view->isSelected();
+    });
+
+    if(it != m_viewports.end()){
+        return *it;
+    }
+    return Q_NULLPTR;
+}
+
+void Scene::zoomIn()
+{
+    Viewport *view = selectedViewport();
+    if(view){
+        view->camera()->zoomIn();
+    }
+}
+
+void Scene::zoomOut()
+{
+    Viewport *view = selectedViewport();
+    if(view){
+        view->camera()->zoomOut();
+    }
+}
+
+QSize Scene::size() const
+{
+    return m_size;
+}
+
+void Scene::setSize(const QSize &size)
+{
+    m_size = size;
+}
+
+void Scene::addViewport(Viewport *view)
+{
+    m_viewports.append(view);
+}
+
+void Scene::addItem(RenderableItem *item)
+{
+    m_items.append(item);
+}
+
+QColor Scene::backgroundColor() const
+{
+    return m_backgroundColor;
+}
+
+void Scene::setBackgroundColor(const QColor &backgroundColor)
+{
+    m_backgroundColor = backgroundColor;
+}

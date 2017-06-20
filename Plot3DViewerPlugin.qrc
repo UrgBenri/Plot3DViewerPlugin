@@ -1,0 +1,24 @@
+<RCC>
+    <qresource prefix="/Plot3DViewerPlugin">
+        <file alias="tabIcon">img/view.png</file>
+        <file alias="settings">img/settings.png</file>
+        <file alias="zoom-in_icon">img/zoom-in.png</file>
+        <file alias="zoom-out_icon">img/zoom-out.png</file>
+        <file alias="zoom-fit_icon">img/zoom-fit.png</file>
+        <file alias="clear_icon">img/clear.png</file>
+        <file alias="refresh_icon">img/refresh.png</file>
+        <file alias="snapshot_icon">img/snapshot.png</file>
+        <file alias="pin_add">img/push_pin.png</file>
+        <file alias="pin_delete">img/remove_pin.png</file>
+        <file alias="scheme1">img/color_scheme_1.png</file>
+        <file alias="scheme2">img/color_scheme_2.png</file>
+        <file alias="scheme3">img/color_scheme_3.png</file>
+        <file alias="scheme4">img/color_scheme_4.png</file>
+        <file alias="scheme5">img/color_scheme_5.png</file>
+        <file alias="scheme6">img/color_scheme_6.png</file>
+        <file alias="scheme7">img/color_scheme_7.png</file>
+        <file alias="plugin.en">i18n/plugin_en.qm</file>
+        <file alias="plugin.fr">i18n/plugin_fr.qm</file>
+        <file alias="plugin.ja">i18n/plugin_ja.qm</file>
+    </qresource>
+</RCC>
