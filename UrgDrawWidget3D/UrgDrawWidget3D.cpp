@@ -40,7 +40,7 @@
 namespace
 {
 const qreal MaxAxisRange = 100;
-const qreal RangeFactor = 0.001;
+const qreal RenderUnit = 0.001;
 
 enum {
     MinimumWidth = 100,
@@ -96,7 +96,6 @@ UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent):
     setMouseTracking(true);
 
     setAttribute(Qt::WA_AcceptTouchEvents);
-
 }
 
 

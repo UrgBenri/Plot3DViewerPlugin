@@ -25,13 +25,15 @@
     SOURCES += \
             $$PWD/Plot3DViewerPlugin.cpp \
             $$PWD/PlotSettingsWidget.cpp \
-            $$PWD/MathUtils.cpp
+            $$PWD/MathUtils.cpp \
+            $$PWD/PixmapDelegate.cpp
 
     HEADERS  += \
             $$PWD/Plot3DViewerPlugin.h \
             $$PWD/PlotSettingsWidget.h \
             $$PWD/MovingAverage.h \
-            $$PWD/MathUtils.h
+            $$PWD/MathUtils.h \
+            $$PWD/PixmapDelegate.h
 
     FORMS += \
             $$PWD/Plot3DViewerPlugin.ui \
@@ -44,9 +46,3 @@
             $$PWD/i18n/plugin_en.ts \
             $$PWD/i18n/plugin_ja.ts
 }
-
-HEADERS += \
-    $$PWD/PixmapDelegate.h
-
-SOURCES += \
-    $$PWD/PixmapDelegate.cpp

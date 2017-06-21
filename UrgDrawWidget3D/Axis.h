@@ -33,7 +33,6 @@ protected:
     float	m_frecuency;
     float	m_lineWidth;
     bool	m_marks;
-    bool    m_initialized;
     unsigned int m_listIndex;
 
 private:

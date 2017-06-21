@@ -1,6 +1,8 @@
 #ifndef GRIDPLANEXY_H
 #define GRIDPLANEXY_H
 
+#include <QColor>
+
 #include "RenderableItem.h"
 
 class GridPlaneXY: public RenderableItem
@@ -18,13 +20,16 @@ public:
     virtual void render() override;
     virtual void init() override;
 
+    QColor color() const;
+    void setColor(const QColor &color);
+
 protected:
     float	m_xMin, m_xMax;
     float	m_yMin, m_yMax;
     float	m_plane_z;
     float	m_frequency;
-    bool    m_initialized;
     unsigned int m_listIndex;
+    QColor m_color;
 };
 
 #endif // GRIDPLANEXY_H

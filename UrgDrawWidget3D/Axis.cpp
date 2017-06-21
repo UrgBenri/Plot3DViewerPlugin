@@ -11,14 +11,13 @@
 
 #include <QDebug>
 
-Axis::Axis(float xmin, float ymin, float zmin, float xmax, float ymax, float zmax, float frecuency, float lineWidth, bool marks) :
-    m_xmin(xmin),m_ymin(ymin),m_zmin(zmin),
-    m_xmax(xmax),m_ymax(ymax),m_zmax(zmax),
-    m_frecuency(frecuency),
-    m_lineWidth(lineWidth),
-    m_marks(marks),
-    m_initialized(false),
-    m_listIndex(0)
+Axis::Axis(float xmin, float ymin, float zmin, float xmax, float ymax, float zmax, float frecuency, float lineWidth, bool marks)
+    : m_xmin(xmin),m_ymin(ymin),m_zmin(zmin)
+    , m_xmax(xmax),m_ymax(ymax),m_zmax(zmax)
+    , m_frecuency(frecuency)
+    , m_lineWidth(lineWidth)
+    , m_marks(marks)
+    , m_listIndex(0)
 {
 
 }
@@ -35,20 +34,25 @@ void Axis::render()
     if(!m_initialized){
         init();
     }
-    glCallList(m_listIndex);
+    if(m_visible){
+        glCallList(m_listIndex);
+    }
 }
 
 void Axis::init()
 {
+    if(m_listIndex > 0){
+        glDeleteLists(m_listIndex, 1);
+    }
     m_listIndex = glGenLists(1);
     glNewList(m_listIndex, GL_COMPILE);
 
     glPushMatrix();
     glLineWidth(m_lineWidth);
-//    checkOpenGLError();
+
+    glTranslatef(m_pos.x(), m_pos.y(), m_pos.z());
 
     glBegin( GL_LINES );
-    //    glColor4ub(m_color.R,m_color.G,m_color.B,m_color.A);
 
     //X axis
     glColor4ub(255,0,0,255);
@@ -65,13 +69,13 @@ void Axis::init()
 
     glEnd();
     glPopMatrix();
-//    checkOpenGLError();
+    //    checkOpenGLError();
 
     glLineWidth(1.0f);
-//    checkOpenGLError();
+    //    checkOpenGLError();
 
-//    glDisable (GL_BLEND);
-//    checkOpenGLError();
+    //    glDisable (GL_BLEND);
+    //    checkOpenGLError();
 
     // Draw the "tick marks":
     if (m_marks ==true)
@@ -108,11 +112,11 @@ void Axis::init()
         glRotatef(90,1,0,0);
         for (float i = m_ymin ; i<= m_ymax ; i = i + m_frecuency)
         {
-//            if (std::abs(i)>1e-4)
-//            {	// Dont draw the "0" more than once
-                std::snprintf(n,50,"%.02f",i);
-                gl_utils::glDrawText(n, 0.25 /* scale */,  gl_utils::FILL );
-//            }
+            //            if (std::abs(i)>1e-4)
+            //            {	// Dont draw the "0" more than once
+            std::snprintf(n,50,"%.02f",i);
+            gl_utils::glDrawText(n, 0.25 /* scale */,  gl_utils::FILL );
+            //            }
             glTranslatef(0,m_frecuency,0);
         }
 
@@ -133,11 +137,11 @@ void Axis::init()
         glRotatef(90,1,0,0);
         for (float i = m_zmin ; i<= m_zmax ; i = i + m_frecuency)
         {
-//            if (std::abs(i)>1e-4)
-//            {	// Dont draw the "0" more than once
-                std::snprintf(n,50,"%.02f",i);
-                gl_utils::glDrawText(n, 0.25 /* scale */,  gl_utils::FILL );
-//            }
+            //            if (std::abs(i)>1e-4)
+            //            {	// Dont draw the "0" more than once
+            std::snprintf(n,50,"%.02f",i);
+            gl_utils::glDrawText(n, 0.25 /* scale */,  gl_utils::FILL );
+            //            }
             glTranslatef(0,0,m_frecuency);
         }
 
