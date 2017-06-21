@@ -10,9 +10,9 @@
 
 class Viewport: public RenderableItem
 {
+    Q_OBJECT
 public:
-    explicit Viewport(const QRectF &rect = QRectF(0.0, 0.0, 1.0, 1.0));
-    Viewport(qreal left, qreal top, qreal width, qreal height);
+    explicit Viewport(QObject *parent = Q_NULLPTR, const QRectF &rect = QRectF(0, 0, 1, 1));
     virtual ~Viewport();
 
     virtual void render() override;
@@ -25,8 +25,11 @@ public:
     QSize sceneSize() const;
     void setSceneSize(const QSize &sceneSize);
 
+    void setRect(const QRectF &rect);
+    inline QRectF rect() const {return m_rect;}
+
     QRect viewportRect() const;
-    QRect rect() const;
+    QRect viewRect() const;
 
     inline Camera *camera() {return &m_camera; }
 

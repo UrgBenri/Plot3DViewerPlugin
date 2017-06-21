@@ -9,8 +9,10 @@
 
 class Camera: public RenderableItem
 {
+    Q_OBJECT
 public:
-    Camera();
+    explicit Camera(QObject *parent = Q_NULLPTR);
+    virtual ~Camera();
 
     virtual void render() override;
 
@@ -21,18 +23,16 @@ public:
     void zoomIn();
     void zoomOut();
 
+    void reset();
+
     enum ViewMode {
         CameraViewMode = 0,
         FrontViewMode,
         LeftViewMode,
         TopViewMode,
-        BottomViewMode,
-        RightViewMode,
-        RearViewMode,
     };
 
     QRect viewportRect() const;
-    void setViewportRect(const QRect &viewportRect);
 
     ViewMode viewMode() const;
     void setViewMode(const ViewMode &mode);

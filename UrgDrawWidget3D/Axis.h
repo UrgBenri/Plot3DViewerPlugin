@@ -5,9 +5,11 @@
 
 class Axis: public RenderableItem
 {
+    Q_OBJECT
 public:
-    explicit Axis(float xmin = -1.0f
-            ,float ymin = -1.0f
+    explicit Axis(QObject *parent = Q_NULLPTR
+            , float xmin = -1.0f
+            , float ymin = -1.0f
             , float zmin = -1.0f
             , float xmax = 1.0f
             , float ymax = 1.0f

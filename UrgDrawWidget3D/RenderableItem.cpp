@@ -1,7 +1,8 @@
 #include "RenderableItem.h"
 
-RenderableItem::RenderableItem()
-    : m_visible(true)
+RenderableItem::RenderableItem(QObject *parent)
+    : QObject(parent)
+    , m_visible(true)
     , m_pos(0, 0, 0)
     , m_initialized(false)
 {

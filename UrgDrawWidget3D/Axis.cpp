@@ -11,8 +11,9 @@
 
 #include <QDebug>
 
-Axis::Axis(float xmin, float ymin, float zmin, float xmax, float ymax, float zmax, float frecuency, float lineWidth, bool marks)
-    : m_xmin(xmin),m_ymin(ymin),m_zmin(zmin)
+Axis::Axis(QObject *parent, float xmin, float ymin, float zmin, float xmax, float ymax, float zmax, float frecuency, float lineWidth, bool marks)
+    : RenderableItem (parent)
+    , m_xmin(xmin),m_ymin(ymin),m_zmin(zmin)
     , m_xmax(xmax),m_ymax(ymax),m_zmax(zmax)
     , m_frecuency(frecuency)
     , m_lineWidth(lineWidth)

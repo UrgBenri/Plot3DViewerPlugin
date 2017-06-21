@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
-Scene::Scene()
-    : RenderableItem ()
+Scene::Scene(QObject *parent)
+    : RenderableItem (parent)
     , m_backgroundColor(108, 108, 132)
 {
 
@@ -64,12 +64,12 @@ void Scene::init()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT |  GL_ACCUM_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    //    std::for_each(m_viewports.begin(), m_viewports.end(), [](Viewport *item){
-    //        item->init();
-    //    });
-    //    std::for_each(m_items.begin(), m_items.end(), [](RenderableItem *item){
-    //        item->init();
-    //    });
+    std::for_each(m_viewports.begin(), m_viewports.end(), [](Viewport *view){
+        view->init();
+    });
+    std::for_each(m_items.begin(), m_items.end(), [](RenderableItem *item){
+        item->init();
+    });
 
 }
 
@@ -117,11 +117,11 @@ Viewport * Scene::viewportForPos(const QPoint &pos) const
 {
     QVector<Viewport *> ports = m_viewports;
     std::sort(ports.begin(), ports.end(), [](Viewport *a, Viewport *b) -> bool{
-        return b->rect().contains(a->rect());
+        return b->viewRect().contains(a->viewRect());
     });
 
     auto it = std::find_if(ports.begin(), ports.end(), [pos](Viewport *view) -> bool{
-            return view->rect().contains(pos);
+            return view->viewRect().contains(pos);
     });
 
     if(it != ports.end()){
@@ -169,14 +169,40 @@ void Scene::setSize(const QSize &size)
     m_size = size;
 }
 
-void Scene::addViewport(Viewport *view)
+void Scene::addViewport(Viewport *view, const QString &name)
 {
-    m_viewports.append(view);
+    if(view){
+        m_nameViewportMap.insert(name, m_viewports.size());
+        m_viewports.append(view);
+        view->setParent(this);
+    }
 }
 
-void Scene::addItem(RenderableItem *item)
+void Scene::addItem(RenderableItem *item, const QString &name)
 {
-    m_items.append(item);
+    if(item){
+        m_nameItemMap.insert(name, m_items.size());
+        m_items.append(item);
+        item->setParent(this);
+    }
+}
+
+Viewport *Scene::viewport(const QString &name) const
+{
+    if(m_nameViewportMap.contains(name)){
+        return m_viewports[m_nameViewportMap[name]];
+    }
+
+    return Q_NULLPTR;
+}
+
+RenderableItem *Scene::item(const QString &name) const
+{
+    if(m_nameItemMap.contains(name)){
+        return m_items[m_nameItemMap[name]];
+    }
+
+    return Q_NULLPTR;
 }
 
 QColor Scene::backgroundColor() const

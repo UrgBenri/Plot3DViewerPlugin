@@ -76,14 +76,17 @@ UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent):
 //    vp->camera()->setViewMode(Camera::TopViewMode);
 //    m_scene.addViewport(vp);
 
-    Viewport *vp = new Viewport(0.0, 0.0, 1.0, 1.0);
+    Viewport *vp = new Viewport();
+    vp->setRect(QRectF(0.0, 0.0, 1.0, 1.0));
     vp->camera()->setViewMode(Camera::CameraViewMode);
-    m_scene.addViewport(vp);
+    m_scene.addViewport(vp, "Main");
 
-    m_scene.addItem(new Axis(-MaxAxisRange, MaxAxisRange
+    m_scene.addItem(new Axis(Q_NULLPTR, -MaxAxisRange, MaxAxisRange
                              , -MaxAxisRange, MaxAxisRange
-                             , -MaxAxisRange, MaxAxisRange, 1, 2));
-    m_scene.addItem(new GridPlaneXY(-MaxAxisRange, MaxAxisRange, -MaxAxisRange, MaxAxisRange, 0, 1));
+                             , -MaxAxisRange, MaxAxisRange, 1, 2)
+                    , "Axis");
+    m_scene.addItem(new GridPlaneXY(Q_NULLPTR, -MaxAxisRange, MaxAxisRange, -MaxAxisRange, MaxAxisRange, 0, 1),
+                    "Grid");
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumSize(MinimumWidth, MinimumHeight);

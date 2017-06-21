@@ -412,7 +412,7 @@ void PlotSettingsWidget::restoreState(QSettings &settings)
     ui->colormode->setCurrentIndex(settings.value("colorMode", 0).toInt());
     ui->colorscheme->setCurrentIndex(settings.value("colorScheme", 0).toInt());
 
-    qInfo() << "colorMode on restore: "<< ui->colormode->currentIndex() << ", and on file: " << settings.value("colorMode", 0).toInt();
+//    qInfo() << "colorMode on restore: "<< ui->colormode->currentIndex() << ", and on file: " << settings.value("colorMode", 0).toInt();
     updateTarget();
 }
 

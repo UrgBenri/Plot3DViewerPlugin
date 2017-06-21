@@ -9,16 +9,9 @@
 #include <QDebug>
 #include "gl_utils.h"
 
-Viewport::Viewport(const QRectF &rect)
-    : RenderableItem()
+Viewport::Viewport(QObject *parent, const QRectF &rect)
+    : RenderableItem(parent)
     , m_rect(rect)
-{
-    initMembers();
-}
-
-Viewport::Viewport(qreal left, qreal top, qreal width, qreal height)
-    : RenderableItem()
-    , m_rect(left, top, width, height)
 {
     initMembers();
 }
@@ -51,7 +44,6 @@ void Viewport::render()
     glClearColor(old_colors[0],old_colors[1],old_colors[2],old_colors[3]);
     glDisable(GL_SCISSOR_TEST);
 
-    m_camera.setViewportRect(rect());
     m_camera.render();
 
     // PART 2: Set the MODELVIEW matrix
@@ -90,6 +82,12 @@ void Viewport::setSceneSize(const QSize &sceneSize)
     m_sceneSize = sceneSize;
 }
 
+void Viewport::setRect(const QRectF &rect)
+{
+    m_rect = rect;
+    m_initialized = false;
+}
+
 QRect Viewport::viewportRect() const
 {
     GLint vx = GLint(m_sceneSize.width() * m_rect.x());
@@ -100,7 +98,7 @@ QRect Viewport::viewportRect() const
     return QRect(vx, vy, vw, vh);
 }
 
-QRect Viewport::rect() const
+QRect Viewport::viewRect() const
 {
     GLint vx = GLint(m_sceneSize.width() * m_rect.x());
     GLint vy = GLint(m_sceneSize.height() * m_rect.y());

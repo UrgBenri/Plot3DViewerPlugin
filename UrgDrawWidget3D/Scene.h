@@ -12,8 +12,9 @@
 
 class Scene: public RenderableItem
 {
+    Q_OBJECT
 public:
-    explicit Scene();
+    explicit Scene(QObject *parent = Q_NULLPTR);
     virtual ~Scene();
 
     virtual void render() Q_DECL_OVERRIDE;
@@ -31,8 +32,11 @@ public:
     QSize size() const;
     void setSize(const QSize &size);
 
-    void addViewport(Viewport *view);
-    void addItem(RenderableItem *item);
+    void addViewport(Viewport *view, const QString &name);
+    void addItem(RenderableItem *item, const QString &name);
+
+    Viewport *viewport(const QString &name) const;
+    RenderableItem * item(const QString &name) const;
 
     QColor backgroundColor() const;
     void setBackgroundColor(const QColor &backgroundColor);
@@ -40,7 +44,9 @@ public:
 private:
     QSize m_size;
     QVector<Viewport *> m_viewports;
+    QHash<QString, int> m_nameViewportMap;
     QVector<RenderableItem *> m_items;
+    QHash<QString, int> m_nameItemMap;
     QColor m_backgroundColor;
 
     Viewport *viewportForPos(const QPoint &pos) const;

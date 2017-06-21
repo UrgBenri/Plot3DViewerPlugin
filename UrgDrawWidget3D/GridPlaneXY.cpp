@@ -6,8 +6,9 @@
 #include <GL/glut.h>
 #endif
 
-GridPlaneXY::GridPlaneXY(float xMin, float xMax, float yMin, float yMax, float z, float frequency)
-    : m_xMin(xMin)
+GridPlaneXY::GridPlaneXY(QObject *parent, float xMin, float xMax, float yMin, float yMax, float z, float frequency)
+    : RenderableItem (parent)
+    , m_xMin(xMin)
     , m_xMax(xMax)
     , m_yMin(yMin)
     , m_yMax(yMax)

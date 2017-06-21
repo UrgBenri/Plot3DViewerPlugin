@@ -17,7 +17,8 @@ const float EPSILON = 1.0e-5;
 const float InitialCameraZoomDistance = 10;
 }
 
-Camera::Camera()
+Camera::Camera(QObject *parent)
+    : RenderableItem (parent)
 {
     cameraPointingX = 0;
     cameraPointingY = 0;
@@ -34,6 +35,11 @@ Camera::Camera()
     m_now_moving = false;
 }
 
+Camera::~Camera()
+{
+
+}
+
 void Camera::render()
 {
     glMatrixMode(GL_PROJECTION);
@@ -41,16 +47,19 @@ void Camera::render()
 
     // Set the camera
     //---------------
-    int vw = m_viewportRect.width();
-    int vh = m_viewportRect.height();
+    GLint	win_dims[4];
+    glGetIntegerv( GL_VIEWPORT, win_dims );
+    int vw = win_dims[2];
+    int vh = win_dims[3];
+    m_viewportRect = QRect(win_dims[0], win_dims[1], win_dims[2], win_dims[3]);
     m_lastProjMat.viewport_width  = vw;
     m_lastProjMat.viewport_height = vh;
 
     m_lastProjMat.azimuth = deg2rad(cameraAzimuthDeg);
     m_lastProjMat.elev    = deg2rad(cameraElevationDeg);
 
-    m_lastProjMat.eye.setX(cameraPointingX +  max(0.01f,cameraZoomDistance) * cos(m_lastProjMat.azimuth)*cos(m_lastProjMat.elev));
-    m_lastProjMat.eye.setY(cameraPointingY +  max(0.01f,cameraZoomDistance) * sin(m_lastProjMat.azimuth)*cos(m_lastProjMat.elev));
+    m_lastProjMat.eye.setX(cameraPointingX +  max(0.01f,cameraZoomDistance) * cos(m_lastProjMat.azimuth) * cos(m_lastProjMat.elev));
+    m_lastProjMat.eye.setY(cameraPointingY +  max(0.01f,cameraZoomDistance) * sin(m_lastProjMat.azimuth) * cos(m_lastProjMat.elev));
     m_lastProjMat.eye.setZ(cameraPointingZ +  max(0.01f,cameraZoomDistance) * sin(m_lastProjMat.elev));
 
     if (fabs(fabs(cameraElevationDeg)-90.f)>EPSILON) {
@@ -295,26 +304,9 @@ void Camera::zoomOut()
     OnUserManuallyMovesCamera(cameraPointingX, cameraPointingY, cameraPointingZ, cameraZoomDistance, cameraElevationDeg, cameraAzimuthDeg);
 }
 
-QRect Camera::viewportRect() const
+void Camera::reset()
 {
-    return m_viewportRect;
-}
-
-void Camera::setViewportRect(const QRect &viewportRect)
-{
-    m_viewportRect = viewportRect;
-}
-
-Camera::ViewMode Camera::viewMode() const
-{
-    return m_viewMode;
-}
-
-void Camera::setViewMode(const ViewMode &mode)
-{
-    m_viewMode = mode;
-
-    switch(mode){
+    switch(m_viewMode){
         case CameraViewMode:
             cameraPointingX = 0;
             cameraPointingY = 0;
@@ -353,6 +345,24 @@ void Camera::setViewMode(const ViewMode &mode)
         break;
 
     }
+    m_initialized = false;
+}
+
+QRect Camera::viewportRect() const
+{
+    return m_viewportRect;
+}
+
+Camera::ViewMode Camera::viewMode() const
+{
+    return m_viewMode;
+}
+
+void Camera::setViewMode(const ViewMode &mode)
+{
+    m_viewMode = mode;
+
+    reset();
 }
 
 void Camera::OnUserManuallyMovesCamera(

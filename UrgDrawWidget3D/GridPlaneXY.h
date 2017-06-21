@@ -8,13 +8,14 @@
 class GridPlaneXY: public RenderableItem
 {
 public:
-    GridPlaneXY(float				xMin = -10,
-                float				xMax = 10 ,
-                float				yMin = -10,
-                float				yMax = 10,
-                float				z    = 0,
-                float				frequency = 1
-                );
+    explicit GridPlaneXY(QObject *parent = Q_NULLPTR
+            , float				xMin = -10
+            , float				xMax = 10
+            , float				yMin = -10
+            , float				yMax = 10
+            , float				z    = 0
+            , float				frequency = 1
+            );
     virtual ~GridPlaneXY();
 
     virtual void render() override;

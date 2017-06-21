@@ -5,10 +5,13 @@
 #include <QColor>
 #include <QVector3D>
 
-class RenderableItem
+#include <QObject>
+
+class RenderableItem: public QObject
 {
+    Q_OBJECT
 public:
-    explicit RenderableItem();
+    explicit RenderableItem(QObject *parent = Q_NULLPTR);
     virtual ~RenderableItem();
 
     virtual void render() = 0;
