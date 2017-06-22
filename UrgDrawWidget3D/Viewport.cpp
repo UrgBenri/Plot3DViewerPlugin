@@ -44,6 +44,7 @@ void Viewport::render()
     glClearColor(old_colors[0],old_colors[1],old_colors[2],old_colors[3]);
     glDisable(GL_SCISSOR_TEST);
 
+    m_camera.setViewportRect(viewRect());
     m_camera.render();
 
     // PART 2: Set the MODELVIEW matrix
@@ -146,9 +147,9 @@ void Viewport::renderBorder()
                    , m_nameColor.alpha());
 
         char n[50];
-        glTranslatef(-1,0.9,0);
+        glRasterPos3f(-1,0.85,0);
         std::snprintf(n,50,"%s", m_name.toLatin1().constData());
-        gl_utils::glDrawText(n, 0.07 /* scale */,  gl_utils::FILL );
+        gl_utils::renderTextBitmap( n, GLUT_BITMAP_TIMES_ROMAN_24 );
     }
 
     glEnable(GL_DEPTH_TEST);

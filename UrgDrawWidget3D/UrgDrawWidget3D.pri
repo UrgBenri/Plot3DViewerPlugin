@@ -3,6 +3,7 @@
     included_modules += $$PWD
     QT += core gui widgets opengl
     win32:LIBS += -lOpengl32 -lGlu32
+    macx:LIBS += -framework GLUT
 
     DEPENDPATH += \
         $$PWD
@@ -35,4 +36,14 @@
         $$PWD/Viewport.h \
         $$PWD/RenderableItem.h
 }
+
+HEADERS += \
+    $$PWD/Text.h \
+    $$PWD/PointCloud.h \
+    $$PWD/ColorModel.h
+
+SOURCES += \
+    $$PWD/Text.cpp \
+    $$PWD/PointCloud.cpp \
+    $$PWD/ColorModel.cpp
 

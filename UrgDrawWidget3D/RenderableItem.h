@@ -7,6 +7,8 @@
 
 #include <QObject>
 
+#include "ColorModel.h"
+
 class RenderableItem: public QObject
 {
     Q_OBJECT
@@ -23,10 +25,14 @@ public:
     QVector3D pos() const;
     void setPos(const QVector3D &pos);
 
+    ColorModel *colorModel() const;
+    void setColorModel(ColorModel *colorModel);
+
 protected:
     bool m_visible;
     QVector3D m_pos;
     bool m_initialized;
+    ColorModel *m_colorModel;
 };
 
 #endif // RENDERABLEITEM_H

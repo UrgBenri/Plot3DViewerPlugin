@@ -24,6 +24,7 @@ public:
     QPointF glGetExtends(const std::string &text, const double textScale, double spacing, double kerning);
     static void glSetFont(const std::string &fontname);
     const std::string &glGetFont();
+    static void renderTextBitmap(const char *str, void *fontStyle);
 };
 
 #endif // GL_UTILS_H

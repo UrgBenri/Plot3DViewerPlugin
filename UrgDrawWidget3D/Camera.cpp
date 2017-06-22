@@ -51,7 +51,6 @@ void Camera::render()
     glGetIntegerv( GL_VIEWPORT, win_dims );
     int vw = win_dims[2];
     int vh = win_dims[3];
-    m_viewportRect = QRect(win_dims[0], win_dims[1], win_dims[2], win_dims[3]);
     m_lastProjMat.viewport_width  = vw;
     m_lastProjMat.viewport_height = vh;
 
@@ -351,6 +350,12 @@ void Camera::reset()
 QRect Camera::viewportRect() const
 {
     return m_viewportRect;
+}
+
+void Camera::setViewportRect(const QRect &viewportRect)
+{
+    m_viewportRect = viewportRect;
+    m_initialized = false;
 }
 
 Camera::ViewMode Camera::viewMode() const

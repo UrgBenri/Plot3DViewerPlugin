@@ -156,21 +156,21 @@ void Plot3DViewerPlugin::refresh()
 
 void Plot3DViewerPlugin::orthoSnapshot()
 {
-    QPixmap pixmap = ui->_3DDrawWidget->renderPixmap(0, 0, true);
-    QString defaulName = QString("/") +
-            QDateTime::currentDateTime().toString("yyyy_MM_dd_HH_mm_ss_zzz") +
-            ".png";
-    QString filename = QFileDialog::getSaveFileName(
-                this,
-                tr("Save snapshot"),
-                QDir::currentPath() + defaulName,
-                tr("PNG file (*.png)"));
-    if (!filename.isNull()) {
-        QFileInfo fi(filename);
-        QDir::setCurrent(fi.absolutePath());
+//    QPixmap pixmap = ui->_3DDrawWidget->renderPixmap(0, 0, true);
+//    QString defaulName = QString("/") +
+//            QDateTime::currentDateTime().toString("yyyy_MM_dd_HH_mm_ss_zzz") +
+//            ".png";
+//    QString filename = QFileDialog::getSaveFileName(
+//                this,
+//                tr("Save snapshot"),
+//                QDir::currentPath() + defaulName,
+//                tr("PNG file (*.png)"));
+//    if (!filename.isNull()) {
+//        QFileInfo fi(filename);
+//        QDir::setCurrent(fi.absolutePath());
 
-        pixmap.save(filename);
-    }
+//        pixmap.save(filename);
+//    }
 }
 
 void Plot3DViewerPlugin::setSelectedStep(int step){

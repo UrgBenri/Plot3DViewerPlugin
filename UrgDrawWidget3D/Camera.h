@@ -33,6 +33,7 @@ public:
     };
 
     QRect viewportRect() const;
+    void setViewportRect(const QRect &viewportRect);
 
     ViewMode viewMode() const;
     void setViewMode(const ViewMode &mode);

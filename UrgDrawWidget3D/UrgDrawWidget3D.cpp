@@ -36,6 +36,8 @@
 
 #include <Axis.h>
 #include "GridPlaneXY.h"
+#include "Text.h"
+#include "PointCloud.h"
 
 namespace
 {
@@ -56,34 +58,42 @@ UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent):
     QGLWidget(parent)
 {
 
-//    Viewport *vp = new Viewport(0.0, 0.0, 0.5, 0.5);
+//    Viewport *vp = new Viewport();
+//    vp->setRect(QRectF(0.0, 0.0, 0.5, 0.5));
 //    vp->setName("Camera");
 //    vp->camera()->setViewMode(Camera::CameraViewMode);
-//    m_scene.addViewport(vp);
+//    m_scene.addViewport(vp, "Camera");
 
-//    vp = new Viewport(0.0, 0.5, 0.5, 0.5);
+//    vp = new Viewport();
+//    vp->setRect(QRectF(0.0, 0.5, 0.5, 0.5));
 //    vp->setName("Front");
 //    vp->camera()->setViewMode(Camera::FrontViewMode);
-//    m_scene.addViewport(vp);
+//    m_scene.addViewport(vp, "Front");
 
-//    vp = new Viewport(0.5, 0.0, 0.5, 0.5);
+//    vp = new Viewport();
+//    vp->setRect(QRectF(0.5, 0.0, 0.5, 0.5));
 //    vp->setName("Left");
 //    vp->camera()->setViewMode(Camera::LeftViewMode);
-//    m_scene.addViewport(vp);
+//    m_scene.addViewport(vp, "Left");
 
-//    vp = new Viewport(0.5, 0.5, 0.5, 0.5);
+//    vp = new Viewport();
+//    vp->setRect(QRectF(0.5, 0.5, 0.5, 0.5));
 //    vp->setName("Top");
 //    vp->camera()->setViewMode(Camera::TopViewMode);
-//    m_scene.addViewport(vp);
+//    m_scene.addViewport(vp, "Top");
 
     Viewport *vp = new Viewport();
     vp->setRect(QRectF(0.0, 0.0, 1.0, 1.0));
     vp->camera()->setViewMode(Camera::CameraViewMode);
     m_scene.addViewport(vp, "Main");
 
-    m_scene.addItem(new Axis(Q_NULLPTR, -MaxAxisRange, MaxAxisRange
-                             , -MaxAxisRange, MaxAxisRange
-                             , -MaxAxisRange, MaxAxisRange, 1, 2)
+    vp = new Viewport();
+        vp->setRect(QRectF(0.75, 0.75, 0.25, 0.25));
+        vp->camera()->setViewMode(Camera::CameraViewMode);
+        m_scene.addViewport(vp, "View");
+
+    m_scene.addItem(new Axis(Q_NULLPTR, -MaxAxisRange, -MaxAxisRange, -MaxAxisRange
+                             , MaxAxisRange, MaxAxisRange, MaxAxisRange, 1, 2, false)
                     , "Axis");
     m_scene.addItem(new GridPlaneXY(Q_NULLPTR, -MaxAxisRange, MaxAxisRange, -MaxAxisRange, MaxAxisRange, 0, 1),
                     "Grid");
@@ -119,7 +129,17 @@ void UrgDrawWidget3D::redraw(void)
 
 void UrgDrawWidget3D::addMeasurementData(const PluginDataStructure &data)
 {
-    redraw();
+    if(data.converter){
+        PointCloud *pc = new PointCloud();
+        QVector<QVector<QVector3D> > rawPoints = data.converter->getPoints(data.ranges);
+        QVector<QVector3D> points;
+        std::for_each(rawPoints.begin(), rawPoints.end(), [&points](const QVector<QVector3D> &inPoints){
+            points << inPoints;
+        });
+        pc->setPoints(points);
+        m_scene.addItem(pc, "Scan");
+        redraw();
+    }
 }
 
 void UrgDrawWidget3D::initializeGL(void)

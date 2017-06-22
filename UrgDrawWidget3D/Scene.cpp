@@ -181,6 +181,10 @@ void Scene::addViewport(Viewport *view, const QString &name)
 void Scene::addItem(RenderableItem *item, const QString &name)
 {
     if(item){
+        if(m_nameItemMap.contains(name)){
+            m_items.remove(m_nameItemMap[name]);
+            m_nameItemMap.remove(name);
+        }
         m_nameItemMap.insert(name, m_items.size());
         m_items.append(item);
         item->setParent(this);

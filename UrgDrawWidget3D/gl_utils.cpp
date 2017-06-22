@@ -139,6 +139,7 @@ QPointF gl_utils::glDrawText(const std::string& text
 {
     glMatrixMode( GL_MODELVIEW );
     glPushMatrix();
+
     if(style == NICE) {
         glPushAttrib( GL_COLOR_BUFFER_BIT | GL_LINE_BIT );
         glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -245,3 +246,9 @@ QPointF gl_utils::glGetExtends(const std::string & text,  const double textScale
     return QPointF(textScale*max_total, textScale*(lines+1)*spacing);
 }
 //  ===============  END OF CODE FROM "libcvd -> gltext.cpp" ===============
+
+
+void	gl_utils::renderTextBitmap( const char *str, void *fontStyle )
+{
+    while ( *str ) glutBitmapCharacter( fontStyle ,*(str++) );
+}
