@@ -49,7 +49,7 @@ public:
     void setLimits(float min_val, float max_val);
     inline float getLimitMin() { return min_limit; }
     inline float getLimitMax() { return max_limit; }
-    QColor getColor(float value);
+    QColor getColor(float value) const;
     QColor getColor(float value, float min_val, float max_val);
     static QColor getColor(float value, float min_val, float max_val, color_scheme_t scheme);
 

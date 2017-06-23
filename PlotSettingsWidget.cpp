@@ -742,7 +742,7 @@ void PlotSettingsWidget::colorModeChanged(int index)
     if (index == 0) {
         ui->colorscheme->setEnabled(false);
         if (m_target) {
-            //m_target->setColorScheme(false, -1); //no color scheme
+            m_target->setColorScheme(false, -1); //no color scheme
             m_target->setColoringMode(-1);
             m_target->setColorScheme(false, ui->colorscheme->currentIndex());
         }

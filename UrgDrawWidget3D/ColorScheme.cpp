@@ -149,7 +149,7 @@ void ColorScheme::setLimits(float min_val, float max_val)
     max_limit = qMax(min_val, max_val);
 }
 
-QColor ColorScheme::getColor(float value)
+QColor ColorScheme::getColor(float value) const
 {
     QColor color;
 

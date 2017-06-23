@@ -3,7 +3,7 @@
 
 #include <QColor>
 #include <QVector>
-#include <QVector3D>
+#include <QVector4D>
 
 #include "RenderableItem.h"
 
@@ -17,8 +17,8 @@ public:
     virtual void render() Q_DECL_OVERRIDE;
     virtual void init() Q_DECL_OVERRIDE;
 
-    QVector<QVector3D> points() const;
-    void setPoints(const QVector<QVector3D> &points);
+    QVector<QVector4D> points() const;
+    void setPoints(const QVector<QVector4D> &points);
 
     float pointSize() const;
     void setPointSize(float pointSize);
@@ -26,9 +26,13 @@ public:
     float rangeFactor() const;
     void setRangeFactor(float rangeFactor);
 
+    QColor color() const;
+    void setColor(const QColor &color);
+
 private:
     unsigned int m_listIndex;
-    QVector<QVector3D> m_points;
+    QVector<QVector4D> m_points;
+    QColor m_color;
     float m_pointSize;
     float m_rangeFactor;
 };

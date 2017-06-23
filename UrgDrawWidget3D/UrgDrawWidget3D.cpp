@@ -34,7 +34,7 @@
 #include <GL/glut.h>
 #endif
 
-#include <Axis.h>
+#include "Axis.h"
 #include "GridPlaneXY.h"
 #include "Text.h"
 #include "PointCloud.h"
@@ -54,33 +54,34 @@ enum {
 };
 }
 
-UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent):
-    QGLWidget(parent)
+UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent)
+    : QGLWidget(parent)
+    , m_clicpRange(30000)
 {
 
-//    Viewport *vp = new Viewport();
-//    vp->setRect(QRectF(0.0, 0.0, 0.5, 0.5));
-//    vp->setName("Camera");
-//    vp->camera()->setViewMode(Camera::CameraViewMode);
-//    m_scene.addViewport(vp, "Camera");
+    //    Viewport *vp = new Viewport();
+    //    vp->setRect(QRectF(0.0, 0.0, 0.5, 0.5));
+    //    vp->setName("Camera");
+    //    vp->camera()->setViewMode(Camera::CameraViewMode);
+    //    m_scene.addViewport(vp, "Camera");
 
-//    vp = new Viewport();
-//    vp->setRect(QRectF(0.0, 0.5, 0.5, 0.5));
-//    vp->setName("Front");
-//    vp->camera()->setViewMode(Camera::FrontViewMode);
-//    m_scene.addViewport(vp, "Front");
+    //    vp = new Viewport();
+    //    vp->setRect(QRectF(0.0, 0.5, 0.5, 0.5));
+    //    vp->setName("Front");
+    //    vp->camera()->setViewMode(Camera::FrontViewMode);
+    //    m_scene.addViewport(vp, "Front");
 
-//    vp = new Viewport();
-//    vp->setRect(QRectF(0.5, 0.0, 0.5, 0.5));
-//    vp->setName("Left");
-//    vp->camera()->setViewMode(Camera::LeftViewMode);
-//    m_scene.addViewport(vp, "Left");
+    //    vp = new Viewport();
+    //    vp->setRect(QRectF(0.5, 0.0, 0.5, 0.5));
+    //    vp->setName("Left");
+    //    vp->camera()->setViewMode(Camera::LeftViewMode);
+    //    m_scene.addViewport(vp, "Left");
 
-//    vp = new Viewport();
-//    vp->setRect(QRectF(0.5, 0.5, 0.5, 0.5));
-//    vp->setName("Top");
-//    vp->camera()->setViewMode(Camera::TopViewMode);
-//    m_scene.addViewport(vp, "Top");
+    //    vp = new Viewport();
+    //    vp->setRect(QRectF(0.5, 0.5, 0.5, 0.5));
+    //    vp->setName("Top");
+    //    vp->camera()->setViewMode(Camera::TopViewMode);
+    //    m_scene.addViewport(vp, "Top");
 
     Viewport *vp = new Viewport();
     vp->setRect(QRectF(0.0, 0.0, 1.0, 1.0));
@@ -88,9 +89,9 @@ UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent):
     m_scene.addViewport(vp, "Main");
 
     vp = new Viewport();
-        vp->setRect(QRectF(0.75, 0.75, 0.25, 0.25));
-        vp->camera()->setViewMode(Camera::CameraViewMode);
-        m_scene.addViewport(vp, "View");
+    vp->setRect(QRectF(0.75, 0.75, 0.25, 0.25));
+    vp->camera()->setViewMode(Camera::TopViewMode);
+    m_scene.addViewport(vp, "View");
 
     m_scene.addItem(new Axis(Q_NULLPTR, -MaxAxisRange, -MaxAxisRange, -MaxAxisRange
                              , MaxAxisRange, MaxAxisRange, MaxAxisRange, 1, 2, false)
@@ -100,15 +101,6 @@ UrgDrawWidget3D::UrgDrawWidget3D(QWidget* parent):
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setMinimumSize(MinimumWidth, MinimumHeight);
-
-    (void) new QShortcut(Qt::Key_Less, this, SLOT(smallerZoom()));
-    (void) new QShortcut(Qt::Key_Comma, this, SLOT(smallerZoom()));
-    (void) new QShortcut(Qt::Key_Greater, this, SLOT(largerZoom()));
-    (void) new QShortcut(Qt::Key_Period, this, SLOT(largerZoom()));
-
-    setMouseTracking(true);
-
-    setAttribute(Qt::WA_AcceptTouchEvents);
 }
 
 
@@ -121,24 +113,63 @@ UrgDrawWidget3D::~UrgDrawWidget3D(void)
 
 void UrgDrawWidget3D::redraw(void)
 {
-    //    m_drawDirty = true;
     update();
 }
 
+void UrgDrawWidget3D::setColorScheme(int scheme)
+{
+    m_colorModel.setColorScheme(scheme);
+}
 
+void UrgDrawWidget3D::setColoringMode(int mode)
+{
+    m_colorModel.setColoringMode(mode);
+}
 
 void UrgDrawWidget3D::addMeasurementData(const PluginDataStructure &data)
 {
     if(data.converter){
         PointCloud *pc = new PointCloud();
         QVector<QVector<QVector3D> > rawPoints = data.converter->getPoints(data.ranges);
-        QVector<QVector3D> points;
+        QVector<QVector4D> points;
+        points.reserve(data.ranges.size() *3);
         std::for_each(rawPoints.begin(), rawPoints.end(), [&points](const QVector<QVector3D> &inPoints){
-            points << inPoints;
+            std::for_each(inPoints.begin(), inPoints.end(), [&points](const QVector3D &point){
+                points << QVector4D(point, 0);
+            });
         });
+        if(data.levels.size() > 0){
+            int pos = 0;
+            std::for_each(data.levels.begin(), data.levels.end(), [&points, &pos](const QVector<long> &levels){
+                std::for_each(levels.begin(), levels.end(), [&points, &pos](long level){
+                    if(pos < points.size()){
+                        points[pos].setW(level);
+                    }
+                    pos++;
+                });
+            });
+        }
+
+        int pos = 0;
+        float clipRange = m_clicpRange;
+        std::for_each(data.ranges.begin(), data.ranges.end(), [&points, &pos, clipRange](const QVector<long> &ranges){
+            std::for_each(ranges.begin(), ranges.end(), [&points, &pos, clipRange](long range){
+                if(pos < points.size()){
+                    if(range > clipRange){
+                        points[pos].setX(0);
+                        points[pos].setY(0);
+                        points[pos].setZ(0);
+                    }
+                }
+                pos++;
+            });
+        });
+        m_colorModel.setMinMaxCoordinates(points);
+        pc->setColorModel(&m_colorModel);
         pc->setPoints(points);
+        pc->setPointSize(m_pointSize);
         m_scene.addItem(pc, "Scan");
-        redraw();
+        update();
     }
 }
 
@@ -158,7 +189,27 @@ void UrgDrawWidget3D::resizeEvent(QResizeEvent* event)
     QGLWidget::resizeEvent(event);
 
     resizeGL(event->size().width(),event->size().height());
-    redraw();
+    update();
+}
+
+float UrgDrawWidget3D::clicpRange() const
+{
+    return m_clicpRange;
+}
+
+void UrgDrawWidget3D::setClicpRange(float clicpRange)
+{
+    m_clicpRange = clicpRange;
+}
+
+float UrgDrawWidget3D::pointSize() const
+{
+    return m_pointSize;
+}
+
+void UrgDrawWidget3D::setPointSize(float pointSize)
+{
+    m_pointSize = pointSize;
 }
 
 
@@ -169,41 +220,39 @@ void UrgDrawWidget3D::paintGL(void)
 
 void UrgDrawWidget3D::mousePressEvent(QMouseEvent* event)
 {
-    //    qDebug() << "UrgDrawWidget3D::mousePressEvent";
     m_scene.mousePressEvent(event);
-    redraw();
+    update();
 }
 
 
 void UrgDrawWidget3D::mouseMoveEvent(QMouseEvent* event)
 {
     m_scene.mouseMoveEvent(event);
-    redraw();
+    update();
 }
 
 void UrgDrawWidget3D::wheelEvent(QWheelEvent* event)
 {
     m_scene.wheelEvent(event);
-    redraw();
+    update();
 }
 
 
 void UrgDrawWidget3D::mouseReleaseEvent(QMouseEvent* event)
 {
-    //    qDebug() << "UrgDrawWidget3D::mouseReleaseEvent";
     m_scene.mouseReleaseEvent(event);
-    redraw();
+    update();
 }
 
 void UrgDrawWidget3D::smallerZoom(void)
 {
     m_scene.zoomOut();
-    redraw();
+    update();
 }
 
 
 void UrgDrawWidget3D::largerZoom(void)
 {
     m_scene.zoomIn();
-    redraw();
+    update();
 }

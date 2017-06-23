@@ -23,6 +23,7 @@
 
 //#include "Color.h"
 #include <QGLWidget>
+#include <QVector4D>
 #include <memory>
 
 #include <QPointF>
@@ -31,7 +32,7 @@
 #include <QTime>
 #include <QReadWriteLock>
 #include "PluginDataStructure.h"
-#include "ColorScheme.h"
+#include "ColorModel.h"
 
 #include "Scene.h"
 
@@ -43,10 +44,18 @@ public:
     UrgDrawWidget3D(QWidget* parent = 0);
     virtual ~UrgDrawWidget3D(void);
 
+    float pointSize() const;
+    void setPointSize(float pointSize);
+
+    float clicpRange() const;
+    void setClicpRange(float clicpRange);
+
 public slots:
     void smallerZoom();
     void largerZoom();
     void redraw(void);
+    void setColorScheme(int scheme);
+    void setColoringMode(int mode);
 
     void addMeasurementData(const PluginDataStructure &data);
 
@@ -73,7 +82,9 @@ private:
     UrgDrawWidget3D &operator = (const UrgDrawWidget3D &rhs);
 
     Scene m_scene;
-
+    ColorModel m_colorModel;
+    float m_pointSize;
+    float m_clicpRange;
 };
 
 #endif /* !QRK_URG_DRAW_WIDGET_H */

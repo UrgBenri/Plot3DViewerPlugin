@@ -306,7 +306,7 @@ void Plot3DViewerPlugin::setDistanceLineSize(int size)
 
 void Plot3DViewerPlugin::setDistancePointSize(int size)
 {
-//    ui->_3DDrawWidget->setRangePointSize(size);
+    ui->_3DDrawWidget->setPointSize(size);
 }
 
 void Plot3DViewerPlugin::setIntensityLineColor(int echo, QColor color)
@@ -460,11 +460,11 @@ void Plot3DViewerPlugin::setColorScheme(bool use_scheme, int scheme)
     if (use_scheme == false) {
         scheme = (int)ColorScheme::PLAIN_SCHEME;
     }
-//    ui->_3DDrawWidget->setColorScheme(use_scheme, scheme);
+    ui->_3DDrawWidget->setColorScheme(scheme);
 }
 
 void Plot3DViewerPlugin::setColoringMode(int mode)
 {
-//    ui->_3DDrawWidget->setColoringMode(mode);
+    ui->_3DDrawWidget->setColoringMode(mode);
 }
 
